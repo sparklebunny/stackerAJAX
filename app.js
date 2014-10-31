@@ -6,6 +6,13 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+	$(".inspiration-getter").submit( function(event) {
+		// zero out results if previous search has run
+		$('.results').html('');
+		// get the value of the tags the user submitted
+		var tags = $(this).find("input[name='answerers']").val();
+		getTopAnswers(tags);
+	});
 });
 
 // this function takes the question object returned by StackOverflow 
@@ -68,6 +75,42 @@ var getUnanswered = function(tags) {
 	
 	var result = $.ajax({
 		url: "http://api.stackexchange.com/2.2/questions/unanswered",
+		data: request,
+		dataType: "jsonp",
+		type: "GET",
+		})
+	.done(function(result){
+		var searchResults = showSearchResults(request.tagged, result.items.length);
+
+		$('.search-results').html(searchResults);
+
+		$.each(result.items, function(i, item) {
+			var question = showQuestion(item);
+			$('.results').append(question);
+		});
+	})
+	.fail(function(jqXHR, error, errorThrown){
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
+	});
+};
+
+//TAKES RESULTS FROM STACKOVERLFOW'S TOP ANSWERS TAGS
+
+
+
+// takes a string of semi-colon separated tags to be searched
+// for on StackOverflow
+var getTopAnswers = function(tag) {
+	
+	// the parameters we need to pass in our request to StackOverflow's API
+	var request = {
+								site: 'stackoverflow',
+								order: 'desc',
+								sort: 'creation'};
+	
+	var result = $.ajax({
+		url: "http://api.stackexchange.com/2.2/tags/" + tag + "/top-answerers/all_time",
 		data: request,
 		dataType: "jsonp",
 		type: "GET",
