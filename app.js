@@ -98,7 +98,39 @@ var getUnanswered = function(tags) {
 //TAKES RESULTS FROM STACKOVERLFOW'S TOP ANSWERS TAGS
 
 
+// this function takes the question object returned by StackOverflow for Top Answers
+// and creates new result to be appended to DOM
+var showTopAnswer = function(answer) {
+	
+	// clone our result template code
+	var result = $('.templates .question').clone();
+	
+	// Set the question properties in result
+	var answerElem = result.find('.question-text a');
+	answerElem.attr('href', answer.user.link);
+	answerElem.text(answer.user.link);
 
+
+	// set the date asked property in result
+	// var asked = result.find('.asked-date');
+	var date = new Date(1000*answer.creation_date);
+	// asked.text(date.toString());
+
+	// set the #views for question property in result
+	var viewed = result.find('.viewed');
+	viewed.text(answer.view_count);
+
+	// set some properties related to asker
+	var asker = result.find('.asker');
+	asker.html('<p>Name: <a target="_blank" href=http://stackoverflow.com/users/' + answer.user.user_id + ' >' +
+													answer.user.display_name +
+												'</a>' +
+							'</p>' +
+ 							'<p>Reputation: ' + answer.user.reputation + '</p>'
+	);
+
+	return result;
+};
 // takes a string of semi-colon separated tags to be searched
 // for on StackOverflow
 var getTopAnswers = function(tag) {
@@ -121,7 +153,7 @@ var getTopAnswers = function(tag) {
 		$('.search-results').html(searchResults);
 
 		$.each(result.items, function(i, item) {
-			var question = showQuestion(item);
+			var question = showTopAnswer(item);
 			$('.results').append(question);
 		});
 	})
