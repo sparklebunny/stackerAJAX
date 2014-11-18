@@ -6,7 +6,7 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
-	$(".inspiration-getter").submit( function(event) {
+	$('.inspiration-getter').submit( function(event) {
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
@@ -100,34 +100,32 @@ var getUnanswered = function(tags) {
 
 // this function takes the question object returned by StackOverflow for Top Answers
 // and creates new result to be appended to DOM
-var showTopAnswer = function(answer) {
+var showTopAnswer = function(item) {
 	
 	// clone our result template code
-	var result = $('.templates .question').clone();
+	var result = $('.templates .answered').clone();
 	
 	// Set the question properties in result
-	var answerElem = result.find('.question-text a');
-	answerElem.attr('href', answer.user.link);
-	answerElem.text(answer.user.link);
+	var answerElem = result.find('.user-text a');
+	answerElem.attr('href', item.user.link);
+	answerElem.text(item.user.display_name);
 
 
 	// set the date asked property in result
 	// var asked = result.find('.asked-date');
-	var date = new Date(1000*answer.creation_date);
+	// var date = new Date(1000*answer.creation_date);
 	// asked.text(date.toString());
 
 	// set the #views for question property in result
-	var viewed = result.find('.viewed');
-	viewed.text(answer.view_count);
+	var viewed = result.find('.accept-rate');
+	viewed.text(item.user.accept_rate);
 
 	// set some properties related to asker
-	var asker = result.find('.asker');
-	asker.html('<p>Name: <a target="_blank" href=http://stackoverflow.com/users/' + answer.user.user_id + ' >' +
-													answer.user.display_name +
-												'</a>' +
-							'</p>' +
- 							'<p>Reputation: ' + answer.user.reputation + '</p>'
-	);
+	var asker = result.find('.profile-image img');
+	asker.attr('src', item.user.profile_image);
+	// asker.text(item.user.profile_image);
+	
+	
 
 	return result;
 };
